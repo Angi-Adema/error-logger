@@ -23,7 +23,7 @@ object AppLogger {
     }
 
     // Logs errors and optional exceptions when an operation fails.
-    // Throwable? allows null; = null makes the exception parameter optional.
+    // Throwable allows a null value and is what makes the exception parameter optional.
     // Log.e() includes the exception's stack trace when one is provided.
     fun error(message: String, exception: Throwable? = null) {
         Log.e(TAG, message, exception)
