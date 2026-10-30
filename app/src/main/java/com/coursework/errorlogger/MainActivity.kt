@@ -20,6 +20,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Register the crash handler before executing application operations.
+        // This allows uncaught exceptions to be saved to internal storage.
+        CrashReporter.initialize(applicationContext)
+
         // Record an informational message when the Activity starts.
         AppLogger.info("ErrorLogger has started!")
 
@@ -116,7 +120,7 @@ fun ErrorLoggerScreen() {
             }
 
             // Intentionally generates an uncaught exception to test crash reporting.
-            // Intentionally throws an IllegalStateException without catching it and will save the report.
+            // Intentionally throws an IllegalStateException without catching it and will close the app and save the report.
             Button(
                 onClick = {
                     throw IllegalStateException("Test crash for ErrorLogger")
