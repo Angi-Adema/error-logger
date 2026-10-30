@@ -9,6 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.coursework.errorlogger.ui.theme.ErrorLoggerTheme
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 // MainActivity launches the app and initializes the Compose UI.
 // (Android Developers - Activity lifecycle and Jetpack Compose)
@@ -39,6 +42,10 @@ fun ErrorLoggerScreen() {
         mutableStateOf("Select a test to begin.")
     }
 
+    // Provides access to the application's context for reading saved reports.
+    // Android Developers - LocalContext
+    val context = LocalContext.current
+
     // Organize the UI using Android Developers - Scaffold.
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -47,6 +54,7 @@ fun ErrorLoggerScreen() {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -105,6 +113,34 @@ fun ErrorLoggerScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Test Performance")
+            }
+
+            // Intentionally generates an uncaught exception to test crash reporting.
+            // Intentionally throws an IllegalStateException without catching it and will save the report.
+            Button(
+                onClick = {
+                    throw IllegalStateException("Test crash for ErrorLogger")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Test Crash Reporting")
+            }
+
+            // Retrieves the saved crash report after the app restarts.
+            // (Android Developers - Context.openFileInput)
+            Button(
+                onClick = {
+                    val report = CrashReporter.readReport(context)
+
+                    result = if (report != null) {
+                        "Saved crash report:\n\n$report"
+                    } else {
+                        "No saved crash report found."
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Crash Report")
             }
 
             HorizontalDivider()
